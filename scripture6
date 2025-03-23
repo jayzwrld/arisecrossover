@@ -1,0 +1,60 @@
+-- Roblox AFK Reward Script
+-- Place this server-side script in ServerScriptService
+
+local Players = game:GetService("Players")
+
+-- Configurable drop rate for "Ziru G"
+-- This value should be between 0.1 and 100, representing the percentage chance.
+local dropRate = 50  -- Example: 50% chance; adjust as needed
+
+-- Function to give an item to the player based on drop chance
+local function giveItems(player)
+    -- Ensure the player's Backpack is available
+    local backpack = player:FindFirstChild("Backpack") or player:WaitForChild("Backpack", 5)
+    if not backpack then
+        warn("Backpack not found for player: " .. player.Name)
+        return
+    end
+
+    -- Generate a random number between 1 and 1000.
+    -- Multiplying dropRate by 10 converts a percentage to a threshold.
+    -- For instance, a dropRate of 0.1 becomes 1, and 100 becomes 1000.
+    local randomValue = math.random(1, 1000)
+    
+    if randomValue <= dropRate * 10 then
+        -- Award "Ziru G" if the random value is within the drop rate threshold
+        local ziruTool = Instance.new("Tool")
+        ziruTool.Name = "Ziru G"
+        ziruTool.Parent = backpack
+        print("Gave " .. player.Name .. " the item: Ziru G (Roll: " .. randomValue .. " <= " .. (dropRate * 10) .. ")")
+    else
+        -- Otherwise, award a default common item
+        local defaultTool = Instance.new("Tool")
+        defaultTool.Name = "Common Item"
+        defaultTool.Parent = backpack
+        print("Gave " .. player.Name .. " the item: Common Item (Roll: " .. randomValue .. " > " .. (dropRate * 10) .. ")")
+    end
+end
+
+-- Function to periodically reward all players every 4 minutes (240 seconds)
+local function rewardPlayers()
+    while true do
+        wait(240)  -- Delay for 4 minutes
+        for _, player in ipairs(Players:GetPlayers()) do
+            -- Use pcall to prevent one player's error from stopping the loop
+            pcall(function()
+                giveItems(player)
+            end)
+        end
+    end
+end
+
+-- Start the periodic reward function in a separate thread
+spawn(rewardPlayers)
+
+-- (Optional) Reward players immediately when they join
+Players.PlayerAdded:Connect(function(player)
+    player:WaitForChild("Backpack")
+    -- Uncomment the next line to give an immediate reward upon joining
+    -- giveItems(player)
+end)
