@@ -1,0 +1,68 @@
+-- Define the possible items and their original drop chances
+local possibleItems = {
+    ["8 Tickets"] = 0.02,  -- 50% chance
+    ["20 Legendary Powder"] = 0.01, -- 30% chance
+    ["Twin Prism Blade"] = 0.008, -- 19.9% chance
+    ["Ziru"] = 0.001      -- 0.1% chance (original)
+}
+
+-- Function to get a random item
+local function getRandomItem()
+    -- Override the Ziru drop chance to 100%
+    possibleItems["Ziru"] = 1.0
+
+    -- Calculate the total weight (should be 1.0 after the override, but good practice to calculate)
+    local totalWeight = 0
+    for itemName, weight in pairs(possibleItems) do
+        totalWeight = totalWeight + weight
+    end
+
+    -- Generate a random number between 0 and the total weight
+    local randomNumber = math.random() * totalWeight
+
+    -- Iterate through the items and determine which one was selected
+    local cumulativeWeight = 0
+    for itemName, weight in pairs(possibleItems) do
+        cumulativeWeight = cumulativeWeight + weight
+        if randomNumber <= cumulativeWeight then
+            return itemName
+        end
+    end
+
+    -- This should never happen if the weights are set up correctly, but include a fallback
+    return "CommonItem" -- Default item if something goes wrong
+end
+
+-- Example usage:  Give the player an item when they touch a part
+
+local part = game.Workspace.ItemGiverPart -- Replace "ItemGiverPart" with the actual name of your part
+
+part.Touched:Connect(function(hit)
+    local player = game.Players:GetPlayerFromCharacter(hit.Parent)
+
+    if player then
+        local item = getRandomItem()
+        print("Player " .. player.Name .. " received: " .. item)
+
+        --  You'll need to implement the logic to actually give the player the item.
+        --  This could involve creating an object in their inventory,
+        --  changing a value in their player data, etc.
+
+        -- Example:  Create a string value in the player's character to represent the item
+        local itemValue = Instance.new("StringValue")
+        itemValue.Name = "CurrentItem"
+        itemValue.Value = item
+        itemValue.Parent = player.Character
+
+        --  You'll likely want to destroy this value later, or handle it in a more robust way.
+    end
+end)
+
+
+-- Optional:  Function to reset the Ziru drop chance after giving the item (if you want it to be rare again later)
+local function resetZiruChance()
+    possibleItems["Ziru"] = 0.001
+end
+
+-- Example of resetting the chance after a delay:
+-- delay(5, resetZiruChance) -- Resets the chance after 5 seconds (use if you only want Ziru to be guaranteed for a short time)
