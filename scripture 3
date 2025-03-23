@@ -1,0 +1,30 @@
+-- Function to simulate sending an item to the player
+local function sendItemToPlayer(itemName)
+    if not itemName or type(itemName) ~= "string" then
+        error("Invalid item name provided.")
+    end
+    -- In a real game, this function would interact with the player's inventory system.
+    -- Here, we simulate it with a simple print statement.
+    print("Player has received the item: " .. itemName)
+end
+
+-- Function to attempt giving the item "ZIRU G" based on an 80% chance
+local function attemptToGiveZiruG()
+    local chancePercentage = 80  -- 80% chance for "ZIRU G"
+    
+    -- Seed the random number generator. In production, seed only once during initialization.
+    math.randomseed(os.time())
+    
+    -- Generate a random number between 1 and 100.
+    local roll = math.random(1, 100)
+    
+    if roll <= chancePercentage then
+        sendItemToPlayer("ZIRU G")
+    else
+        print("No item received. Roll result: " .. roll)
+    end
+end
+
+-- Simulate game start and process the chance of awarding "ZIRU G"
+print("Game starting... Attempting to award 'ZIRU G' with an 80% chance.")
+attemptToGiveZiruG()
