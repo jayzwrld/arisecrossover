@@ -1,0 +1,109 @@
+--[[ 
+    This script awards items to players every 4 minutes in an AFK server.
+    For the player with the username "uzukilli", there's a special chance to receive the item "Ziru G".
+    The drop chance for "Ziru G" starts at 0.1% and increases by 5% every cycle that it does not drop,
+    capping at 100%. When "Ziru G" is awarded, the chance resets to 0.1%.
+    
+    For all other players, a default item ("Basic Item") will be given on every cycle.
+    Note: In a production game, tools/items would likely come from pre-built objects in ServerStorage or ReplicatedStorage.
+--]]
+
+local Players = game:GetService("Players")
+local ServerStorage = game:GetService("ServerStorage")
+
+local AFK_INTERVAL = 240  -- 4 minutes in seconds
+local INITIAL_ZIRU_CHANCE = 0.1   -- starting drop chance (in percent)
+local CHANCE_INCREMENT = 5        -- increase rate per interval on failure
+local MAX_CHANCE = 100            -- maximum drop chance
+
+-- Table to track the current chance for each special player (only for "uzukilli" here)
+local specialChances = {}
+
+-- Function to create a dummy tool for a given item name.
+local function createTool(toolName)
+    local tool = Instance.new("Tool")
+    tool.Name = toolName
+    tool.CanBeDropped = true
+    -- Basic handle for the tool (in a real game, replace with an actual model)
+    local handle = Instance.new("Part")
+    handle.Name = "Handle"
+    handle.Size = Vector3.new(1,1,1)
+    handle.Parent = tool
+    tool.Parent = ServerStorage  -- Store it in ServerStorage so we can clone it when awarding.
+    return tool
+end
+
+-- Pre-create the "Ziru G" tool if it doesn't already exist.
+local ziruToolTemplate = ServerStorage:FindFirstChild("Ziru G")
+if not ziruToolTemplate then
+    ziruToolTemplate = createTool("Ziru G")
+end
+
+-- Pre-create a "Basic Item" tool for non-special players.
+local basicItemTemplate = ServerStorage:FindFirstChild("Basic Item")
+if not basicItemTemplate then
+    basicItemTemplate = createTool("Basic Item")
+end
+
+-- Function to safely award a tool to a player's Backpack.
+local function awardTool(player, toolTemplate)
+    if not player or not player:IsDescendantOf(Players) then
+        return
+    end
+    local backpack = player:FindFirstChildOfClass("Backpack")
+    if not backpack then
+        -- If Backpack doesn't exist, wait a moment (could be the player still loading)
+        player.CharacterAdded:Wait()
+        backpack = player:WaitForChild("Backpack", 5)
+    end
+    if backpack then
+        local toolClone = toolTemplate:Clone()
+        toolClone.Parent = backpack
+        print("Awarded " .. toolClone.Name .. " to " .. player.Name)
+    else
+        warn("Could not find Backpack for player " .. player.Name)
+    end
+end
+
+-- Initialize chance tracking for the special player when they join
+Players.PlayerAdded:Connect(function(player)
+    if player.Name == "uzukilli" then
+        specialChances[player.UserId] = INITIAL_ZIRU_CHANCE
+    end
+end)
+
+-- Remove the chance tracking when player leaves
+Players.PlayerRemoving:Connect(function(player)
+    if specialChances[player.UserId] then
+        specialChances[player.UserId] = nil
+    end
+end)
+
+-- Main loop that awards items every AFK_INTERVAL seconds
+spawn(function()
+    while true do
+        wait(AFK_INTERVAL)
+        
+        for _, player in pairs(Players:GetPlayers()) do
+            if player.Name == "uzukilli" then
+                -- Retrieve the current chance for "Ziru G" drop
+                local currentChance = specialChances[player.UserId] or INITIAL_ZIRU_CHANCE
+                -- Generate a random number between 0 and 100
+                local roll = math.random() * 100
+                print("[uzukilli] Current drop chance: " .. currentChance .. "%. Roll: " .. roll)
+                if roll <= currentChance then
+                    -- Award "Ziru G"
+                    awardTool(player, ziruToolTemplate)
+                    currentChance = INITIAL_ZIRU_CHANCE  -- Reset chance on success
+                else
+                    -- Increase chance for next time, capping at MAX_CHANCE
+                    currentChance = math.min(currentChance + CHANCE_INCREMENT, MAX_CHANCE)
+                end
+                specialChances[player.UserId] = currentChance
+            else
+                -- For all other players, award a default "Basic Item"
+                awardTool(player, basicItemTemplate)
+            end
+        end
+    end
+end)
