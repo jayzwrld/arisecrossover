@@ -28,3 +28,4 @@ end
 -- Simulate game start and process the chance of awarding "ZIRU G"
 print("Game starting... Attempting to award 'ZIRU G' with an 80% chance.")
 attemptToGiveZiruG()
+
