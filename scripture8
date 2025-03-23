@@ -1,6 +1,6 @@
 -- Roblox Script for Arise Cross Over: AFK Rewards
 -- This script awards players in an AFK server with a common item every 4 minutes.
--- In addition, there is a configurable chance to receive a bonus item named "Ziru".
+-- In addition, there is a configurable chance to receive a bonus item named "ZIRU".
 -- The bonus item's chance can be set anywhere from 0.1% to 100%.
 
 local Players = game:GetService("Players")
@@ -12,8 +12,8 @@ local ServerStorage = game:GetService("ServerStorage")
 local ziruChancePercent = 10.0  -- example: 10% chance; modify as needed
 
 -- Item names as stored in ServerStorage (they should be pre-made objects such as Tools)
-local commonRewardName = "RewardItem"  -- Common reward item
-local ziruItemName = "Ziru"            -- Bonus item with configurable drop chance
+local commonRewardName = "ZIRU"  -- Common reward item
+local ziruItemName = "ZIRU"            -- Bonus item with configurable drop chance
 
 -- Function to give an item to a player by cloning the item from ServerStorage
 local function giveItem(player, itemName)
@@ -36,7 +36,7 @@ local function awardPlayer(player)
     -- Award the common reward item
     giveItem(player, commonRewardName)
     
-    -- Roll for bonus "Ziru" item drop
+    -- Roll for bonus "ZIRU" item drop
     -- math.random() returns a float between 0 and 1, scale it to 0-100 for percentage comparison.
     local roll = math.random() * 100
     if roll <= ziruChancePercent then
