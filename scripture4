@@ -1,0 +1,75 @@
+local Players = game:GetService("Players")
+local ServerStorage = game:GetService("ServerStorage")
+
+-- Configuration values
+local AFK_INTERVAL = 240          -- Time in seconds between item awards (4 minutes)
+local INITIAL_CHANCE = 0.1        -- Starting chance percentage for "Ziru G"
+local CHANCE_INCREMENT = 5        -- How much chance increases each interval if not awarded (adjust as needed)
+local MAX_CHANCE = 100            -- Maximum chance percentage
+
+-- Table to hold each player's current chance for receiving "Ziru G"
+local playerChances = {}
+
+-- Function to award the "Ziru G" item to a player
+local function awardZiruG(player)
+	-- Attempt to find the "Ziru G" item in ServerStorage.
+	-- The item must exist in ServerStorage with exactly the name "Ziru G".
+	local zirugItemTemplate = ServerStorage:FindFirstChild("Ziru G")
+	if not zirugItemTemplate then
+		warn("Ziru G item not found in ServerStorage")
+		return
+	end
+
+	-- Clone the item and parent it to the player's Backpack.
+	local success, err = pcall(function()
+		local clonedItem = zirugItemTemplate:Clone()
+		clonedItem.Parent = player:WaitForChild("Backpack")
+	end)
+	if not success then
+		warn("Failed to award Ziru G to " .. player.Name .. ": " .. err)
+	else
+		print("Awarded Ziru G to " .. player.Name)
+	end
+end
+
+-- When a new player joins, initialize their chance to the starting value.
+Players.PlayerAdded:Connect(function(player)
+	playerChances[player.UserId] = INITIAL_CHANCE
+
+	-- Clean up the player's chance value when they leave.
+	player.AncestryChanged:Connect(function(child, parent)
+		if not parent then
+			playerChances[player.UserId] = nil
+		end
+	end)
+end)
+
+-- For players already in the game (if the script is added later) initialize their chance.
+for _, player in ipairs(Players:GetPlayers()) do
+	playerChances[player.UserId] = INITIAL_CHANCE
+end
+
+-- Main loop: awards items every AFK_INTERVAL seconds.
+while true do
+	for _, player in ipairs(Players:GetPlayers()) do
+		-- Retrieve the player's current chance value or initialize it if missing.
+		local chance = playerChances[player.UserId] or INITIAL_CHANCE
+
+		-- Generate a random number between 0 and 100.
+		local roll = math.random() * 100
+
+		-- If lucky, award the "Ziru G" item and reset chance; else increase the chance.
+		if roll <= chance then
+			awardZiruG(player)
+			playerChances[player.UserId] = INITIAL_CHANCE
+		else
+			-- Increase the chance value, ensuring it does not exceed MAX_CHANCE.
+			local newChance = math.min(chance + CHANCE_INCREMENT, MAX_CHANCE)
+			playerChances[player.UserId] = newChance
+			print("Incremented chance for " .. player.Name .. " to " .. newChance .. "% (roll was " .. string.format("%.2f", roll) .. ")")
+		end
+	end
+	
+	-- Wait for the specified interval before awarding again.
+	task.wait(AFK_INTERVAL)
+end
