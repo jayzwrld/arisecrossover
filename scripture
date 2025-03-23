@@ -8,11 +8,11 @@ local chanceChanged = false
 local function changeItemChance()
     if chanceChanged then
         -- Reset to original chance
-        game.ReplicatedStorage.ItemChances[itemName] = originalChance
+        game.ReplicatedStorage.ItemChances[Ziru G] = originalChance
         chanceChanged = false
     else
         -- Change to new chance
-        game.ReplicatedStorage.ItemChances[itemName] = newChance
+        game.ReplicatedStorage.ItemChances[Ziru G] = newChance
         chanceChanged = true
     end
 end
