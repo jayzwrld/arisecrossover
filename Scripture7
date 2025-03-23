@@ -1,0 +1,43 @@
+-- Script for Arise Cross Over AFK Server Item Distribution
+-- This script awards players with the item "Ziru G" every 4 minutes.
+-- The chance of awarding "Ziru G" is adjustable from 0.1% up to 100%.
+-- Make sure you have a Tool or item named "Ziru G" stored in ServerStorage.
+
+local Players = game:GetService("Players")
+local ServerStorage = game:GetService("ServerStorage")
+
+-- Adjustable chance percentage for awarding "Ziru G"
+-- Set this value anywhere between 0.1 (0.1%) and 100 (100%)
+local ZIRU_G_CHANCE_PERCENT = 0.1
+
+-- Function to award the "Ziru G" item to a given player.
+local function awardZiruG(player)
+    local item = ServerStorage:FindFirstChild("Ziru G")
+    if item then
+        local backpack = player:FindFirstChild("Backpack")
+        if backpack then
+            local clone = item:Clone()
+            clone.Parent = backpack
+            print("Awarded 'Ziru G' to " .. player.Name)
+        else
+            warn("Backpack not found for player: " .. player.Name)
+        end
+    else
+        warn("'Ziru G' not found in ServerStorage.")
+    end
+end
+
+-- Main loop: awards items every 4 minutes (240 seconds)
+spawn(function()
+    while true do
+        wait(240)  -- 4 minutes interval
+        for _, player in ipairs(Players:GetPlayers()) do
+            -- math.random() returns a float in [0, 1)
+            if math.random() < (ZIRU_G_CHANCE_PERCENT / 100) then
+                awardZiruG(player)
+            else
+                print("Player " .. player.Name .. " did not receive 'Ziru G' this round.")
+            end
+        end
+    end
+end)
