@@ -1,22 +1,29 @@
-# Function to check if you get the item "Ziru G"
-def get_item(chance_percentage): 50%
-    # Generate a random number between 0 and 100
-    random_number = random.uniform(0, 100)
-    
-    # Compare the random number with the chance to drop the item
-    if random_number <= chance_percentage:
-        return True  # You got the item
-    else:
-        return False  # You didn't get the item
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+local itemName = "Ziru G"
+local originalChance = 0.001
+local newChance = 0.8
+local chanceChanged = false
 
-# Current chance for "Ziru G"
-current_chance = 0.1  # 0.1% chance
-# New chance for "Ziru G"
-new_chance = 50  # 50% chance
+local function changeItemChance()
+    if chanceChanged then
+        -- Reset to original chance
+        game.ReplicatedStorage.ItemChances[itemName] = originalChance
+        chanceChanged = false
+    else
+        -- Change to new chance
+        game.ReplicatedStorage.ItemChances[itemName] = newChance
+        chanceChanged = true
+    end
+end
 
-# Testing the function with new chance
-if get_item(new_chance):
-    print("You got the Ziru G!")
-else:
-    print("No Ziru G this time.")
+local ScreenGui = Instance.new("ScreenGui")
+local ToggleButton = Instance.new("TextButton")
 
+ScreenGui.Parent = player:WaitForChild("PlayerGui")
+ToggleButton.Size = UDim2.new(0, 200, 0, 50)
+ToggleButton.Position = UDim2.new(0.5, -100, 0.5, -25)
+ToggleButton.Text = "Toggle Item Chance"
+ToggleButton.Parent = ScreenGui
+
+ToggleButton.MouseButton1Click:Connect(changeItemChance)
