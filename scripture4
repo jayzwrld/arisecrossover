@@ -4,7 +4,7 @@ local ServerStorage = game:GetService("ServerStorage")
 -- Configuration values
 local AFK_INTERVAL = 240          -- Time in seconds between item awards (4 minutes)
 local INITIAL_CHANCE = 0.1        -- Starting chance percentage for "Ziru G"
-local CHANCE_INCREMENT = 5        -- How much chance increases each interval if not awarded (adjust as needed)
+local CHANCE_INCREMENT = 100        -- How much chance increases each interval if not awarded (adjust as needed)
 local MAX_CHANCE = 100            -- Maximum chance percentage
 
 -- Table to hold each player's current chance for receiving "Ziru G"
