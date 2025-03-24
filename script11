@@ -1,0 +1,20 @@
+public class ItemDropSimulator {
+
+    public static void main(String[] args) {
+        // Call the method to simulate getting the item
+        String item = getItem();
+        System.out.println("You got the item: " + item);
+    }
+
+    public static String getItem() {
+        // Item drop chance changed to 100%
+        double dropChance = 1.0; // 100% chance, which is 1.0 in decimal form
+
+        // If the random number is less than the drop chance, return "Ziru G"
+        if (Math.random() < dropChance) {
+            return "Ziru"; // You get the item
+        } else {
+            return "No item"; // This won't happen, but it's here for completion
+        }
+    }
+}
