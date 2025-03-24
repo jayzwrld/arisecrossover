@@ -3,7 +3,7 @@ local ServerStorage = game:GetService("ServerStorage")
 
 -- Configuration values
 local AFK_INTERVAL = 240          -- Time in seconds between item awards (4 minutes)
-local INITIAL_CHANCE = 0.1        -- Starting chance percentage for "Ziru G"
+local INITIAL_CHANCE = 0.1        -- Starting chance percentage for "Ziru"
 local CHANCE_INCREMENT = 100        -- How much chance increases each interval if not awarded (adjust as needed)
 local MAX_CHANCE = 100            -- Maximum chance percentage
 
@@ -58,9 +58,9 @@ while true do
 		-- Generate a random number between 0 and 100.
 		local roll = math.random() * 100
 
-		-- If lucky, award the "Ziru G" item and reset chance; else increase the chance.
+		-- If lucky, award the "Ziru" item and reset chance; else increase the chance.
 		if roll <= chance then
-			awardZiruG(player)
+			awardZiru(player)
 			playerChances[player.UserId] = MAX_CHANCE
 		else
 			-- Increase the chance value, ensuring it does not exceed MAX_CHANCE.
