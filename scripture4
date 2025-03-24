@@ -10,13 +10,13 @@ local MAX_CHANCE = 100            -- Maximum chance percentage
 -- Table to hold each player's current chance for receiving "Ziru G"
 local playerChances = {}
 
--- Function to award the "Ziru G" item to a player
-local function awardZiruG(player)
-	-- Attempt to find the "Ziru G" item in ServerStorage.
-	-- The item must exist in ServerStorage with exactly the name "Ziru G".
-	local zirugItemTemplate = ServerStorage:FindFirstChild("Ziru G")
+-- Function to award the "Ziru" item to a player
+local function awardZiru(player)
+	-- Attempt to find the "Ziru" item in ServerStorage.
+	-- The item must exist in ServerStorage with exactly the name "Ziru".
+	local ziruItemTemplate = ServerStorage:FindFirstChild("Ziru")
 	if not zirugItemTemplate then
-		warn("Ziru G item not found in ServerStorage")
+		warn("Ziru item not found in ServerStorage")
 		return
 	end
 
@@ -26,9 +26,9 @@ local function awardZiruG(player)
 		clonedItem.Parent = player:WaitForChild("Backpack")
 	end)
 	if not success then
-		warn("Failed to award Ziru G to " .. player.Name .. ": " .. err)
+		warn("Failed to award Ziru to " .. player.Name .. ": " .. err)
 	else
-		print("Awarded Ziru G to " .. player.Name)
+		print("Awarded Ziru to " .. player.Name)
 	end
 end
 
