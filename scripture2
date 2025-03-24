@@ -1,7 +1,7 @@
 -- Original drop chance for "Ziru G" was 0.1% (0.001 in decimal)
 local dropChanceOld = 0.001
 -- Updated drop chance for "Ziru G" is now 80% (0.8 in decimal)
-local dropChanceNew = 0.8
+local dropChanceNew = 1.0
 
 -- Function to attempt dropping an item based on a given chance (0 <= chance <= 1)
 local function tryDropItem(chance)
