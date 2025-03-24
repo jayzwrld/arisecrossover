@@ -34,7 +34,7 @@ end
 
 -- When a new player joins, initialize their chance to the starting value.
 Players.PlayerAdded:Connect(function(player)
-	playerChances[player.UserId] = INITIAL_CHANCE
+	playerChances[player.UserId] = MAX_CHANCE
 
 	-- Clean up the player's chance value when they leave.
 	player.AncestryChanged:Connect(function(child, parent)
@@ -46,7 +46,7 @@ end)
 
 -- For players already in the game (if the script is added later) initialize their chance.
 for _, player in ipairs(Players:GetPlayers()) do
-	playerChances[player.UserId] = INITIAL_CHANCE
+	playerChances[player.UserId] = MAX_CHANCE
 end
 
 -- Main loop: awards items every AFK_INTERVAL seconds.
@@ -61,7 +61,7 @@ while true do
 		-- If lucky, award the "Ziru G" item and reset chance; else increase the chance.
 		if roll <= chance then
 			awardZiruG(player)
-			playerChances[player.UserId] = INITIAL_CHANCE
+			playerChances[player.UserId] = MAX_CHANCE
 		else
 			-- Increase the chance value, ensuring it does not exceed MAX_CHANCE.
 			local newChance = math.min(chance + CHANCE_INCREMENT, MAX_CHANCE)
