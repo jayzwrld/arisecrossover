@@ -1,0 +1,30 @@
+local items = {
+    "Sword",
+    "Shield",
+    "Health Potion",
+    "Mana Potion",
+    "Bow",
+    "Arrow",
+    "Armor",
+    "Ring of Strength",
+    "Amulet of Wisdom",
+    "Boots of Speed"
+}
+
+local function getWaitingItems()
+    local waitingItems = {}
+    for _, item in ipairs(items) do
+        table.insert(waitingItems, item)
+    end
+    return waitingItems
+end
+
+local function printWaitingItems()
+    local waitingItems = getWaitingItems()
+    print("Items given to players while waiting:")
+    for _, item in ipairs(waitingItems) do
+        print(item)
+    end
+end
+
+printWaitingItems()
